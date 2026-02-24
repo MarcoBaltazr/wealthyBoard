@@ -1,0 +1,144 @@
+.btn-add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #00d084 0%, #00b872 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-add:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 208, 132, 0.3);
+}
+
+.assets-table {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: #2a3139;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table-header,
+.table-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.2fr 1.2fr 1.2fr 1.5fr 80px;
+  gap: 16px;
+  padding: 16px;
+  background: #1a1f26;
+  align-items: center;
+}
+
+.table-header {
+  font-size: 13px;
+  font-weight: 600;
+  color: #8b949e;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: #0f1419;
+}
+
+.table-row {
+  transition: background 0.2s ease;
+}
+
+.table-row:hover {
+  background: #1f2831;
+}
+
+.asset-ticker {
+  font-weight: 600;
+  color: #00d084;
+  font-size: 15px;
+}
+
+.asset-value {
+  font-weight: 600;
+  color: #e7e9ea;
+}
+
+.asset-result {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.asset-result.positive {
+  color: #00d084;
+}
+
+.asset-result.negative {
+  color: #ff4757;
+}
+
+.result-percentage {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.btn-view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #2a3139;
+  border: 1px solid #3a4149;
+  border-radius: 8px;
+  color: #8b949e;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-view:hover {
+  background: #3a4149;
+  color: #e7e9ea;
+  transform: scale(1.05);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 60px 20px;
+  text-align: center;
+  color: #8b949e;
+}
+
+@media (max-width: 1200px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+  
+  .table-header div:nth-child(n+4),
+  .table-row div:nth-child(n+4) {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .table-header div:nth-child(n+3),
+  .table-row div:nth-child(n+3) {
+    display: none;
+  }
+}

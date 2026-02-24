@@ -1,0 +1,135 @@
+.layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 260px;
+  background: linear-gradient(180deg, #1a1f26 0%, #0f1419 100%);
+  border-right: 1px solid #2a3139;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+.sidebar.collapsed {
+  width: 80px;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 20px;
+  border-bottom: 1px solid #2a3139;
+}
+
+.logo-icon {
+  color: #00d084;
+  min-width: 32px;
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: 600;
+  color: #e7e9ea;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sidebar.collapsed .logo-text {
+  display: none;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 20px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: #8b949e;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.nav-item:hover {
+  background: #1f2831;
+  color: #e7e9ea;
+}
+
+.nav-item.active {
+  background: linear-gradient(90deg, #00d08426 0%, #00d08410 100%);
+  color: #00d084;
+  border-left: 3px solid #00d084;
+}
+
+.sidebar.collapsed .nav-item {
+  justify-content: center;
+  padding: 12px;
+}
+
+.sidebar.collapsed .nav-item span {
+  display: none;
+}
+
+.collapse-btn {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: #1f2831;
+  border: 1px solid #2a3139;
+  color: #8b949e;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.collapse-btn:hover {
+  background: #2a3139;
+  color: #e7e9ea;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  background: #0f1419;
+  padding: 32px;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    z-index: 1000;
+  }
+  
+  .sidebar.collapsed {
+    transform: translateX(-100%);
+  }
+  
+  .content {
+    margin-left: 0;
+    padding: 20px;
+  }
+}
