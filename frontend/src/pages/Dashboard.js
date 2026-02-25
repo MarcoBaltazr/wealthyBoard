@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import StatCard from '../components/StatCard';
 import Card from '../components/Card';
@@ -16,11 +16,7 @@ const Dashboard = () => {
   const [portfolio, setPortfolio] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    loadPortfolio();
-  }, []);
-
-  const loadPortfolio = async () => {
+  const loadPortfolio = useCallback(async () => {
     try {
       setIsLoading(true);
       const response = await getTotalPortfolio();
@@ -30,7 +26,11 @@ const Dashboard = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadPortfolio();
+  }, [loadPortfolio]);
 
   const chartData = portfolio?.categories
     .filter(cat => cat.currentValue > 0)

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Edit2, Trash2, DollarSign } from 'lucide-react';
 import Card from '../components/Card';
@@ -17,11 +17,7 @@ const AssetDetails = () => {
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  useEffect(() => {
-    loadAsset();
-  }, [ticker]);
-
-  const loadAsset = async () => {
+  const loadAsset = useCallback(async () => {
     try {
       setIsLoading(true);
       const response = await getAssetSummary(ticker);
@@ -32,7 +28,11 @@ const AssetDetails = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [ticker]);
+
+  useEffect(() => {
+    loadAsset();
+  }, [loadAsset]);
 
   const handleUpdatePrice = async (e) => {
     e.preventDefault();

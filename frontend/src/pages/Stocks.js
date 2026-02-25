@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, TrendingUp, TrendingDown, Eye } from 'lucide-react';
 import Card from '../components/Card';
@@ -13,11 +13,7 @@ const Stocks = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    loadSummary();
-  }, []);
-
-  const loadSummary = async () => {
+  const loadSummary = useCallback(async () => {
     try {
       setIsLoading(true);
       const response = await getCategorySummary('ACAO');
@@ -27,7 +23,11 @@ const Stocks = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadSummary();
+  }, [loadSummary]);
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('pt-BR', {
