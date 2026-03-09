@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Home, TrendingUp, Building2, DollarSign, Bitcoin } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Home, TrendingUp, Building2, Bitcoin, LogOut } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 import './Layout.css';
 
 const Layout = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+  const { user, logout } = useAuth();
 
   const menuItems = [
     { path: '/dashboard', icon: Home, label: 'Dashboard' },
@@ -14,12 +17,24 @@ const Layout = ({ children }) => {
     { path: '/cripto', icon: Bitcoin, label: 'Criptomoedas' },
   ];
 
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <div className="layout">
       <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
         <div className="sidebar-header">
-          <DollarSign size={32} className="logo-icon" />
-          {!collapsed && <h1 className="logo-text">WealthyBoard</h1>}
+          <div className="logo-section">
+            <div className="logo-icon">💰</div>
+            {!collapsed && <h1 className="logo-text">WealthyBoard</h1>}
+          </div>
+          {!collapsed && user && (
+            <div className="user-info">
+              <div className="user-name">{user.name}</div>
+            </div>
+          )}
         </div>
         
         <nav className="sidebar-nav">
@@ -41,13 +56,24 @@ const Layout = ({ children }) => {
           })}
         </nav>
         
-        <button 
-          className="collapse-btn"
-          onClick={() => setCollapsed(!collapsed)}
-          title={collapsed ? 'Expandir' : 'Recolher'}
-        >
-          {collapsed ? '→' : '←'}
-        </button>
+        <div className="sidebar-footer">
+          <button 
+            className="logout-btn"
+            onClick={handleLogout}
+            title={collapsed ? 'Sair' : ''}
+          >
+            <LogOut size={20} />
+            {!collapsed && <span>Sair</span>}
+          </button>
+          
+          <button 
+            className="collapse-btn"
+            onClick={() => setCollapsed(!collapsed)}
+            title={collapsed ? 'Expandir' : 'Recolher'}
+          >
+            {collapsed ? '→' : '←'}
+          </button>
+        </div>
       </aside>
       
       <main className="content">
