@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const Transaction = require('../models/Transaction');
 const CurrentPrice = require('../models/CurrentPrice');
+const auth = require('../middleware/auth');
+
+// Todas as rotas requerem autenticação
+router.use(auth);
 
 // Função auxiliar para calcular posição de um ativo
 const calculateAssetPosition = (transactions, currentPrice) => {
@@ -62,13 +66,19 @@ const calculateAssetPosition = (transactions, currentPrice) => {
 router.get('/asset/:ticker', async (req, res) => {
   try {
     const ticker = req.params.ticker.toUpperCase();
-    const transactions = await Transaction.find({ ticker }).sort({ date: 1 });
+    const transactions = await Transaction.find({ 
+      ticker,
+      userId: req.userId 
+    }).sort({ date: 1 });
     
     if (transactions.length === 0) {
       return res.status(404).json({ message: 'Nenhuma transação encontrada para este ativo' });
     }
     
-    const priceData = await CurrentPrice.findOne({ ticker });
+    const priceData = await CurrentPrice.findOne({ 
+      ticker,
+      userId: req.userId 
+    });
     const currentPrice = priceData ? priceData.currentPrice : 0;
     
     const position = calculateAssetPosition(transactions, currentPrice);
@@ -80,7 +90,8 @@ router.get('/asset/:ticker', async (req, res) => {
       transactions
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Erro ao buscar resumo do ativo:', error);
+    res.status(500).json({ message: 'Erro ao buscar resumo do ativo.' });
   }
 });
 
@@ -88,7 +99,10 @@ router.get('/asset/:ticker', async (req, res) => {
 router.get('/category/:category', async (req, res) => {
   try {
     const category = req.params.category.toUpperCase();
-    const transactions = await Transaction.find({ category }).sort({ date: 1 });
+    const transactions = await Transaction.find({ 
+      category,
+      userId: req.userId 
+    }).sort({ date: 1 });
     
     if (transactions.length === 0) {
       return res.json({ 
@@ -120,7 +134,10 @@ router.get('/category/:category', async (req, res) => {
     let categoryTotalSold = 0;
     
     for (const [ticker, txs] of Object.entries(assetMap)) {
-      const priceData = await CurrentPrice.findOne({ ticker });
+      const priceData = await CurrentPrice.findOne({ 
+        ticker,
+        userId: req.userId 
+      });
       const currentPrice = priceData ? priceData.currentPrice : 0;
       const position = calculateAssetPosition(txs, currentPrice);
       
@@ -157,7 +174,8 @@ router.get('/category/:category', async (req, res) => {
       totalSold: categoryTotalSold
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Erro ao buscar resumo da categoria:', error);
+    res.status(500).json({ message: 'Erro ao buscar resumo da categoria.' });
   }
 });
 
@@ -178,7 +196,10 @@ router.get('/total', async (req, res) => {
     };
     
     for (const category of categories) {
-      const transactions = await Transaction.find({ category }).sort({ date: 1 });
+      const transactions = await Transaction.find({ 
+        category,
+        userId: req.userId 
+      }).sort({ date: 1 });
       
       if (transactions.length === 0) continue;
       
@@ -199,7 +220,10 @@ router.get('/total', async (req, res) => {
       let categoryTotalSold = 0;
       
       for (const [ticker, txs] of Object.entries(assetMap)) {
-        const priceData = await CurrentPrice.findOne({ ticker });
+        const priceData = await CurrentPrice.findOne({ 
+          ticker,
+          userId: req.userId 
+        });
         const currentPrice = priceData ? priceData.currentPrice : 0;
         const position = calculateAssetPosition(txs, currentPrice);
         
@@ -246,7 +270,8 @@ router.get('/total', async (req, res) => {
     
     res.json(portfolioSummary);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Erro ao buscar resumo total:', error);
+    res.status(500).json({ message: 'Erro ao buscar resumo total do portfólio.' });
   }
 });
 

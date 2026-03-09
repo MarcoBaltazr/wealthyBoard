@@ -33,6 +33,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/wealthybo
   .catch(err => console.error('❌ Erro ao conectar MongoDB:', err));
 
 // Rotas
+app.use('/api/auth', require('./routes/auth'));
 app.use('/api/transactions', require('./routes/transactions'));
 app.use('/api/prices', require('./routes/prices'));
 app.use('/api/portfolio', require('./routes/portfolio'));

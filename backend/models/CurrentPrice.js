@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
 
 const currentPriceSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   ticker: {
     type: String,
     required: true,
-    uppercase: true,
-    unique: true
+    uppercase: true
   },
   currentPrice: {
     type: Number,
@@ -19,5 +23,8 @@ const currentPriceSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
+
+// Índice composto: cada usuário pode ter seu próprio preço para cada ticker
+currentPriceSchema.index({ userId: 1, ticker: 1 }, { unique: true });
 
 module.exports = mongoose.model('CurrentPrice', currentPriceSchema);

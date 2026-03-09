@@ -2,6 +2,38 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
+// Configurar interceptor para adicionar token em todas as requisições
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Autenticação
+export const register = (name, email, password) => {
+  return axios.post(`${API_URL}/auth/register`, { name, email, password });
+};
+
+export const login = (email, password) => {
+  return axios.post(`${API_URL}/auth/login`, { email, password });
+};
+
+export const getMe = () => {
+  return axios.get(`${API_URL}/auth/me`);
+};
+
+export const logout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+};
+
 // Transações
 export const getTransactions = (filters = {}) => {
   return axios.get(`${API_URL}/transactions`, { params: filters });
