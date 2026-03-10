@@ -1,14 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, TrendingUp, Building2, Bitcoin, LogOut } from 'lucide-react';
+import { Home, TrendingUp, Building2, Bitcoin, LogOut, Menu, X } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import './Layout.css';
 
 const Layout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, logout } = useAuth();
+
+  // Detectar mudanças no tamanho da tela
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      if (!mobile) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Fechar menu ao mudar de página no mobile
+  useEffect(() => {
+    if (isMobile) {
+      setIsMobileMenuOpen(false);
+    }
+  }, [location, isMobile]);
 
   const menuItems = [
     { path: '/dashboard', icon: Home, label: 'Dashboard' },
@@ -24,13 +47,32 @@ const Layout = ({ children }) => {
 
   return (
     <div className="layout">
-      <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
+      {/* Botão hamburguer mobile */}
+      {isMobile && (
+        <button 
+          className="mobile-menu-btn"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Menu"
+        >
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      )}
+
+      {/* Backdrop mobile */}
+      {isMobile && isMobileMenuOpen && (
+        <div 
+          className="mobile-backdrop"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      <aside className={`sidebar ${isMobile && !isMobileMenuOpen ? 'mobile-hidden' : ''} ${isCollapsed ? 'collapsed' : ''}`}>
         <div className="sidebar-header">
           <div className="logo-section">
             <div className="logo-icon">💰</div>
-            {!collapsed && <h1 className="logo-text">WealthyBoard</h1>}
+            {!isCollapsed && <h1 className="logo-text">WealthyBoard</h1>}
           </div>
-          {!collapsed && user && (
+          {!isCollapsed && user && (
             <div className="user-info">
               <div className="user-name">{user.name}</div>
             </div>
@@ -47,10 +89,10 @@ const Layout = ({ children }) => {
                 key={item.path}
                 to={item.path}
                 className={`nav-item ${isActive ? 'active' : ''}`}
-                title={collapsed ? item.label : ''}
+                title={isCollapsed ? item.label : ''}
               >
                 <Icon size={20} />
-                {!collapsed && <span>{item.label}</span>}
+                {!isCollapsed && <span>{item.label}</span>}
               </Link>
             );
           })}
@@ -60,18 +102,18 @@ const Layout = ({ children }) => {
           <button 
             className="logout-btn"
             onClick={handleLogout}
-            title={collapsed ? 'Sair' : ''}
+            title={isCollapsed ? 'Sair' : ''}
           >
             <LogOut size={20} />
-            {!collapsed && <span>Sair</span>}
+            {!isCollapsed && <span>Sair</span>}
           </button>
           
           <button 
             className="collapse-btn"
-            onClick={() => setCollapsed(!collapsed)}
-            title={collapsed ? 'Expandir' : 'Recolher'}
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            title={isCollapsed ? 'Expandir' : 'Recolher'}
           >
-            {collapsed ? '→' : '←'}
+            {isCollapsed ? '→' : '←'}
           </button>
         </div>
       </aside>
